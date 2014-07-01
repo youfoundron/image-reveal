@@ -29,8 +29,10 @@ function focusImage(into_focus, context, imageObj, sourceWidth, sourceHeight, de
   context.putImageData(imageData, destX, destY);
   if (into_focus) {
     pixelation -= 1;
+    console.log(pixelation)
   } else {
     pixelation += 1;
+    console.log(pixelation)
   }
 }
 
@@ -68,31 +70,35 @@ imageObj.onload = function() {
   // });
 
   $('#reveal-button').on('click', function() {
-    step = $('#step-input').val();
+    step = parseInt( $('#step-input').val() );
     stopping_point = pixelation - step
-    console.log('Stepping down ' + step + ' points from ' + pixelation )
     var intervalId = setInterval(function() {
-      context.drawImage(imageObj, destX, destY);
-      focusImage(true, context, imageObj, sourceWidth, sourceHeight, destX, destY);
-      if (pixelation < stopping_point || pixelation < 1) {
+      console.log('Stepping down ' + step + ' points from ' + pixelation + ' to ' + stopping_point)
+      if (pixelation > stopping_point && pixelation >= 1) {
+        context.drawImage(imageObj, destX, destY);
+        focusImage(true, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      } else {
+        console.log('stopped revealing! pixelation is ' + pixelation)
         clearInterval(intervalId);
       }
     }, timeInterval);
-    console.log('-' + pixelation)
+    // console.log('-' + pixelation)
   });
 
   $('#obscure-button').on('click', function() {
-    step = $('#step-input').val();
+    step = parseInt( $('#step-input').val() );
     stopping_point = pixelation + step
-    console.log('Stepping up ' + step + ' points from ' + pixelation )
     var intervalId = setInterval(function() {
-      context.drawImage(imageObj, destX, destY);
-      focusImage(false, context, imageObj, sourceWidth, sourceHeight, destX, destY);
-      if (pixelation > stopping_point || pixelation > 99) {
+      console.log('Stepping up ' + step + ' points from ' + pixelation + ' to ' + stopping_point)
+      if (pixelation < stopping_point && pixelation <= 99) {
+        context.drawImage(imageObj, destX, destY);
+        focusImage(false, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      } else {
+        console.log('stopped obscuring! pixelation is ' + pixelation )
         clearInterval(intervalId);
       }
     }, timeInterval);
-    console.log('-' + pixelation)
+    // console.log('+' + pixelation)
   });
 
   // $('#tweet-button').on('click', function() {
@@ -114,6 +120,6 @@ imageObj.onload = function() {
 
 $(function() {
 
-  imageObj.src = './kind_of_a_big_dill.jpg';
+  imageObj.src = '../images/kind_of_a_big_dill.jpg';
 
 });
