@@ -1,0 +1,8 @@
+{
+  "name": "imagereveal",
+  "version": "0.0.1",
+  "description": "Tweet fueled image reveal",
+  "dependencies": {
+    "mime": "~1.2.7"
+  }
+}
