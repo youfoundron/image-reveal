@@ -1,0 +1,17 @@
+.container {
+  width: 680px;
+  margin: 0 auto;
+  font-family: sans-serif;
+  color: lightgrey;
+  background-color: #2A2728;
+}
+
+.centered {
+  text-align: center;
+}
+
+#canvas-container {
+  margin: 0 auto;
+  text-align: center;
+  drop-shadow: 10px 10px 5px black
+}

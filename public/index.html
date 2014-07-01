@@ -1,27 +1,37 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <style>
-    body {
-      margin: 0px;
-      padding: 0px;
-    }
-  </style>
+  <title>Image Reveal</title>
+  <link href="./stylesheets/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body class="container">
-  <h1>Kind of a Big Dill...</h1>
-  <canvas id="myCanvas" width="578" height="400"></canvas>
-  <input id="step-input" type="number" value="10" min="1" max="100" />
-<!-- <button id="tweet-button">Tweet</button> -->
-  <button id="obscure-button">Obscure</button><button id="reveal-button">Reveal</button>
-  <h4 id="#pixelation"></h4>
+  <h1 class="centered">Kind of a Big Dill...</h1>
+  <div id="canvas-container">
 <!--
-  <script src="./jquery-2.1.1.min.js"></script>
+    <img id="target-image" src="./images/kind_of_a_big_dill.jpg"/>
 -->
+    <canvas id="myCanvas" width="578" height="400"></canvas>
+  </div>
+  <div id="image-controls" class="centered">
+    <label>
+      Pixel step:
+      <input id="pixel-input" type="number" value="25" min="1" max="100" />
+    </label>
+    <button id="obscure-button">Obscure</button>
+    <button id="reveal-button">Reveal</button>
+    <br/>
+    <label>
+      Blur step:
+      <input id="blur-input" type="number" value="15" min="1" max="180" />
+    </label>
+    <button id="blur-button">Blur</button>
+    <button id="focus-button">Focus</button>
+    <br/>
+    <button id="test-button">Test</button>
+  </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/camanjs/3.3.0/caman.full.min.js"></script>
+  <script src="./javascripts/stack_blur.js"></script>
   <script src="./javascripts/reveal.js"></script>
-<!--  <script type='text/coffeescript' src='./reveal.coffee'></script>
-  <script type='text/javascript' src='https://rawgit.com/jashkenas/coffeescript/master/extras/coffee-script.js'> </script>
--->
 </body>
 </html>
