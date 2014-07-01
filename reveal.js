@@ -1,22 +1,6 @@
-var pixelation = 100;
+var pixelation = 101;
 
-function focusImageByInterval(interval, context, imageObj, sourceWidth, sourceHeight, destX, destY) {
-  var sourceX = destX;
-  var sourceY = destY;
-
-  var imageData = context.getImageData(sourceX, sourceY, sourceWidth, sourceHeight);
-  var data = imageData.data;
-
-  // for (var y = pixelation)
-  var red = data[((sourceWidth * pixelation) + pixelation) * 4];
-  var green = data[((sourceWidth * pixelation) + pixelation) * 4 + 1];
-  var blue = data[((sourceWidth * pixelation) + pixelation) * 4 + 2];
-
-  console.log('Pixelation: ' + '\nRed: ' + red + '\nBlue: ' + blue + '\nGreen: ' + green)
-}
-
-function focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY) {
-  console.log('focus')
+function focusImage(into_focus, context, imageObj, sourceWidth, sourceHeight, destX, destY) {
   var sourceX = destX;
   var sourceY = destY;
 
@@ -43,46 +27,15 @@ function focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY) 
 
   // overwrite original image
   context.putImageData(imageData, destX, destY);
-  pixelation -= 1;
-}
-
-function obscureImage(context, imageObj, sourceWidth, sourceHeight, destX, destY) {
-  console.log('obscure')
-  var sourceX = destX;
-  var sourceY = destY;
-
-  var imageData = context.getImageData(sourceX, sourceY, sourceWidth, sourceHeight);
-  var data = imageData.data;
-
-  for(var y = 0; y < sourceHeight; y += pixelation) {
-    for(var x = 0; x < sourceWidth; x += pixelation) {
-      var red = data[((sourceWidth * y) + x) * 4];
-      var green = data[((sourceWidth * y) + x) * 4 + 1];
-      var blue = data[((sourceWidth * y) + x) * 4 + 2];
-
-      for(var n = 0; n < pixelation; n++) {
-        for(var m = 0; m < pixelation; m++) {
-          if(x + m < sourceWidth) {
-            data[((sourceWidth * (y + n)) + (x + m)) * 4] = red;
-            data[((sourceWidth * (y + n)) + (x + m)) * 4 + 1] = green;
-            data[((sourceWidth * (y + n)) + (x + m)) * 4 + 2] = blue;
-          }
-        }
-      }
-    }
+  if (into_focus) {
+    pixelation -= 1;
+  } else {
+    pixelation += 1;
   }
-
-  // overwrite original image
-  context.putImageData(imageData, destX, destY);
-  pixelation += 1;
 }
 
-
-
-var fps = 20;
-// frames / second
-var timeInterval = 1000 / fps;
-// milliseconds
+var fps = 20; // frames / second
+var timeInterval = 1000 / fps; // milliseconds
 var canvas = document.getElementById('myCanvas');
 var context = canvas.getContext('2d');
 
@@ -97,39 +50,54 @@ imageObj.onload = function() {
   var stopping_point;
 
   context.drawImage(imageObj, destX, destY);
-  focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
+  focusImage(true, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+
+  // $('#reveal-button').on('click', function() {
+  //   step = $('#step-input').val();
+  //   stopping_point = pixelation - step
+  //   console.log('Stepping down ' + step + ' points from ' + pixelation )
+  //   var intervalId = setInterval(function() {
+  //     context.drawImage(imageObj, destX, destY);
+  //     if (pixelation < stopping_point) {
+  //       clearInterval(intervalId);
+  //     } else {
+  //       focusImage(true, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+  //     }
+  //   }, timeInterval);
+  //   console.log('-' + pixelation)
+  // });
 
   $('#reveal-button').on('click', function() {
     step = $('#step-input').val();
     stopping_point = pixelation - step
+    console.log('Stepping down ' + step + ' points from ' + pixelation )
     var intervalId = setInterval(function() {
       context.drawImage(imageObj, destX, destY);
-      if (pixelation < stopping_point) {
+      focusImage(true, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      if (pixelation < stopping_point || pixelation < 1) {
         clearInterval(intervalId);
-      } else {
-        focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
       }
-    });
+    }, timeInterval);
     console.log('-' + pixelation)
   });
 
   $('#obscure-button').on('click', function() {
     step = $('#step-input').val();
     stopping_point = pixelation + step
+    console.log('Stepping up ' + step + ' points from ' + pixelation )
     var intervalId = setInterval(function() {
       context.drawImage(imageObj, destX, destY);
-      if (pixelation > stopping_point) {
+      focusImage(false, context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      if (pixelation > stopping_point || pixelation > 99) {
         clearInterval(intervalId);
-      } else {
-        obscureImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
       }
-    });
-    console.log('+' + pixelation)
+    }, timeInterval);
+    console.log('-' + pixelation)
   });
 
-  $('#tweet-button').on('click', function() {
-    alert('Sent tweet! #picklehumor')
-  });
+  // $('#tweet-button').on('click', function() {
+  //   alert('Sent tweet! #picklehumor')
+  // });
 
   // var intervalId = setInterval(function() {
   //   context.drawImage(imageObj, destX, destY);
