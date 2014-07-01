@@ -93,26 +93,44 @@ imageObj.onload = function() {
   var sourceHeight = imageObj.height;
   var destX = canvas.width / 2 - sourceWidth / 2;
   var destY = canvas.height / 2 - sourceHeight / 2;
+  var step;
+  var stopping_point;
 
   context.drawImage(imageObj, destX, destY);
   focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
 
   $('#reveal-button').on('click', function() {
-    context.drawImage(imageObj, destX, destY);
-    focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
+    step = $('#step-input').val();
+    stopping_point = pixelation - step
+    var intervalId = setInterval(function() {
+      context.drawImage(imageObj, destX, destY);
+      if (pixelation < stopping_point) {
+        clearInterval(intervalId);
+      } else {
+        focusImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      }
+    });
     console.log('-' + pixelation)
   });
 
   $('#obscure-button').on('click', function() {
-    context.drawImage(imageObj, destX, destY);
-    obscureImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
+    step = $('#step-input').val();
+    stopping_point = pixelation + step
+    var intervalId = setInterval(function() {
+      context.drawImage(imageObj, destX, destY);
+      if (pixelation > stopping_point) {
+        clearInterval(intervalId);
+      } else {
+        obscureImage(context, imageObj, sourceWidth, sourceHeight, destX, destY);
+      }
+    });
     console.log('+' + pixelation)
   });
 
   $('#tweet-button').on('click', function() {
     alert('Sent tweet! #picklehumor')
   });
-  
+
   // var intervalId = setInterval(function() {
   //   context.drawImage(imageObj, destX, destY);
   //
