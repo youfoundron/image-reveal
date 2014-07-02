@@ -1,9 +1,9 @@
-var pixelation = 101;
-var blur_radius = 16;
+var pixelation = 30;
+var blur_radius = 90;
 
 var fps = 20; // frames / second
 var pixelTime = 1000 / fps; // milliseconds
-var blurTime = 1500 / fps;  // milliseconds
+var blurTime = 1000 / fps;  // milliseconds
 var canvas_id = 'myCanvas'
 var canvas = document.getElementById(canvas_id);
 var context = canvas.getContext('2d');
@@ -29,7 +29,8 @@ var blur_stopping_point;
 var max_blur_radius;
 var min_blur_radius;
 
-var oscillating;
+var oscillating_blur;
+var oscillating_pixel;
 
 function pixelateImage(into_focus, context, delta, imageObj, sourceWidth, sourceHeight, destX, destY) {
   var sourceX = destX;
@@ -39,7 +40,7 @@ function pixelateImage(into_focus, context, delta, imageObj, sourceWidth, source
   var data = imageData.data;
   if (into_focus == true) pixelation -= 1;
   if (into_focus == false) pixelation += 1;
-  if (into_focus != null) console.log('pixelation: ' + pixelation);
+  // if (into_focus != null) console.log('pixelation: ' + pixelation);
   delta = pixelation;
 
   for(var y = 0; y < sourceHeight; y += delta) {
@@ -67,11 +68,11 @@ function blurImage(into_focus, context, destX, destY, sourceWidth, sourceHeight)
   if (into_focus) {
     blur_radius -= 1;
     stackBlurCanvasRGB( canvas_id, destX, destY, sourceWidth, sourceHeight, blur_radius )
-    console.log('blur_radius: ' + blur_radius)
+    // console.log('blur_radius: ' + blur_radius)
   } else {
     blur_radius += 1;
     stackBlurCanvasRGB( canvas_id, destX, destY, sourceWidth, sourceHeight, blur_radius )
-    console.log('blur_radius: ' + blur_radius)
+    // console.log('blur_radius: ' + blur_radius)
   }
 }
 
@@ -80,7 +81,7 @@ function blurTo(point, callback) {
   blur_step = point - blur_radius;
   if (blur_step != 0) {
     blur_stopping_point = blur_radius + blur_step;
-    console.log('Stepping blur ' + blur_step + ' points from ' + blur_radius + ' to ' + blur_stopping_point);
+    if (oscillating_blur == false) console.log('Stepping blur ' + blur_step + ' points from ' + blur_radius + ' to ' + blur_stopping_point);
     var blurInterval = setInterval(function() {
       if (blur_step > 0) {     // blur the image
         if (blur_radius < blur_stopping_point && blur_radius < max_blur_radius) {
@@ -89,7 +90,7 @@ function blurTo(point, callback) {
           pixelateImage(null, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
           blurImage(false, context, destX, destY, sourceWidth, sourceHeight);
         } else {
-          console.log('stopped blurring! blur radius is ' + blur_radius);
+          // console.log('stopped blurring! blur radius is ' + blur_radius);
           clearInterval(blurInterval)
 
           if (callback != null) callback();
@@ -101,7 +102,7 @@ function blurTo(point, callback) {
           pixelateImage(null, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
           blurImage(true, context, destX, destY, sourceWidth, sourceHeight);
         } else {
-          console.log('stopped focusing! blur radius is ' + blur_radius);
+          // console.log('stopped focusing! blur radius is ' + blur_radius);
           clearInterval(blurInterval);
 
           if (callback != null) callback();
@@ -114,11 +115,11 @@ function blurTo(point, callback) {
 }
 
 // distort to specific pixelation
-function pixelTo(point) {
+function pixelTo(point, callback) {
   pixel_step = point - pixelation;
   if (pixel_step != 0) {
     pixel_stopping_point = pixelation + pixel_step;
-    console.log('Stepping pixelation ' + pixel_step + ' points from ' + pixelation + ' to ' + pixel_stopping_point);
+    if (oscillating_pixel == false) console.log('Stepping pixelation ' + pixel_step + ' points from ' + pixelation + ' to ' + pixel_stopping_point);
     var pixelInterval = setInterval(function() {
       if (pixel_step < 0) {  // reveal the image
         if (pixelation > pixel_stopping_point && pixelation > min_pixelation) {
@@ -126,8 +127,10 @@ function pixelTo(point) {
           pixelateImage(true, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
           stackBlurCanvasRGB( canvas_id, destX, destY, sourceWidth, sourceHeight, blur_radius )
         } else {
-          console.log('stopped revealing! pixelation is ' + pixelation);
+          // console.log('stopped revealing! pixelation is ' + pixelation);
           clearInterval(pixelInterval);
+
+          if (callback != null) callback();
         }
       } else {               // obscure the image
         if (pixelation < pixel_stopping_point && pixelation < max_pixelation) {
@@ -135,8 +138,10 @@ function pixelTo(point) {
           pixelateImage(false, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
           stackBlurCanvasRGB( canvas_id, destX, destY, sourceWidth, sourceHeight, blur_radius )
         } else {
-          console.log('stopped obscuring! pixelation is ' + pixelation );
+          // console.log('stopped obscuring! pixelation is ' + pixelation );
           clearInterval(pixelInterval);
+
+          if (callback != null) callback();
         }
       }
     }, pixelTime);
@@ -146,21 +151,54 @@ function pixelTo(point) {
 }
 
 // blur oscillation
-function startOscillating(a, b) {
-  oscillating = true;
-  oscillate(a, b);
+function startOscillatingBlur(a, b) {
+  oscillating_blur = true;
+  oscillateBlur(a, b);
 }
 
-function stopOscillating() {
-  oscillating = false;
+function stopOscillatingBlur() {
+  oscillating_blur = false;
 }
 
-function oscillate(a, b) {
-  if (oscillating) {
+function oscillateBlur(a, b) {
+  if (oscillating_blur) {
     blurTo(a, function() {
-      oscillate(b, a)
+      oscillateBlur(b, a)
     });
   }
+}
+
+function startOscillatingPixel(a, b) {
+  oscillating_pixel = true;
+  oscillatePixel(a, b)
+}
+
+function stopOscillatingPixel() {
+  oscillating_pixel = false
+}
+
+function oscillatePixel(a, b) {
+  if (oscillating_pixel) {
+    pixelTo(a, function() {
+      oscillatePixel(b, a)
+    });
+  }
+}
+
+function revealImage() {
+  stopOscillatingBlur();
+  stopOscillatingPixel();
+  pixelTo(1, function() { blurTo(0) });
+}
+
+function setBlurSpeed(newBlurTime) {
+  console.log('Changed blur transition speed to ' + newBlurTime + 'ms from ' + blurTime + 'ms')
+  blurTime = newBlurTime
+}
+
+function setPixelSpeed(newPixelTime) {
+  console.log('Changed pixel transition speed to ' + newPixelTime + 'ms from ' + pixelTime + 'ms')
+  pixelTime = newPixelTime
 }
 
 imageObj.onload = function() {
@@ -179,10 +217,11 @@ imageObj.onload = function() {
 
   // draw image on page
   context.drawImage(manipulatedImage, destX, destY);
-  pixelateImage(true, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
+  // pixelate image
+  pixelateImage(null, context, pixelation, manipulatedImage, sourceWidth, sourceHeight, destX, destY);
 
   // blur image
-  blurImage(true, context, destX, destY, sourceWidth, sourceHeight);
+  blurImage(null, context, destX, destY, sourceWidth, sourceHeight);
 
   // Image Control Events
   $('#reveal-button').on('click', function() {
@@ -210,16 +249,15 @@ imageObj.onload = function() {
   });
 
   $('#show-button').on('click', function() {
-    stopOscillating();
-    pixelTo(1);
-    blurTo(0);
+    revealImage();
   });
 
 };
 
 $(function() {
 
-  imageObj.src = '../images/kind_of_a_big_dill.jpg';
-  startOscillating(20, 50);
+  imageObj.src = '../images/art.jpg';
+  startOscillatingBlur(20, 90);
+  startOscillatingPixel(11, 30);
 
 });

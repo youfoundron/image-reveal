@@ -5,32 +5,34 @@
   <link href="./stylesheets/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body class="container">
-  <h1 class="centered">Image Reveal</h1>
+  <h1 class="centered">Title</h1>
   <div id="canvas-container">
 <!--
     <img id="target-image" src="./images/kind_of_a_big_dill.jpg"/>
 -->
-    <canvas id="myCanvas" width="578" height="400"></canvas>
+    <canvas id="myCanvas" width="662" height="438"></canvas>
   </div>
-  <div id="image-controls" class="centered">
-    <label>
-      Pixel step:
-      <input id="pixel-input" type="number" value="25" min="1" max="100" />
-    </label>
-    <button id="obscure-button">Obscure</button>
-    <button id="reveal-button">Reveal</button>
-    <br/>
-    <label>
-      Blur step:
-      <input id="blur-input" type="number" value="15" min="1" max="180" />
-    </label>
-    <button id="blur-button">Blur</button>
-    <button id="focus-button">Focus</button>
-    <br/>
-    <button id="show-button">Show</button>
+  <div id="progress-bar-div" class="container">
+
+    <div id="progress-bar"></div>
+
+  </div>
+  <div id="percent-div" class="centered">
+
+    <h2 id="percent">0%</h2>
+
+  </div>
+  <div id="social-media-buttons" class="container">
+    <div id="tweet-button-div" class="button-div">
+      <button><p>Tweet</p></button>
+    </div>
+    <div id="like-button-div" class="button-div">
+      <button><p>Like</p></button>
+    </div>
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="./javascripts/stack_blur.js"></script>
   <script src="./javascripts/reveal.js"></script>
+  <script src="./javascripts/progress.js"></script>
 </body>
 </html>

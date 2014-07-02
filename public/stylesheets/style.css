@@ -1,5 +1,5 @@
 .container {
-  width: 680px;
+  width: 1325px;
   margin: 0 auto;
   font-family: sans-serif;
   color: lightgrey;
@@ -13,5 +13,38 @@
 #canvas-container {
   margin: 0 auto;
   text-align: center;
-  drop-shadow: 10px 10px 5px black
+  /*drop-shadow: 10px 10px 5px black*/
+}
+
+#progress-bar-div {
+  margin-top: 20px;
+  height:   3px;
+  width: 650px;
+  background-color: #191919;
+  border-radius: 3px;
+}
+
+#progress-bar {
+  height: 3px;
+  width: 5px;
+  background-color: lightgrey;
+}
+
+#social-media-buttons {
+  text-align: center;
+}
+
+.button-div {
+  display: inline;
+}
+
+button {
+  background: none;
+  color: inherit;
+  font-size: 30px;
+  border: none;
+}
+
+button:hover {
+  color: #191919;
 }
