@@ -207,6 +207,6 @@ imageObj.onload = function() {
 $(function() {
 
   imageObj.src = '../images/kind_of_a_big_dill.jpg';
-  // startOscillating(5, 50);
+  // startOscsleeillating(5, 50);
 
 });
