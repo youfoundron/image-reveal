@@ -76,7 +76,7 @@ function blurImage(into_focus, context, destX, destY, sourceWidth, sourceHeight)
 }
 
 // blur to specific radius
-function blurTo(point) {
+function blurTo(point, callback) {
   blur_step = point - blur_radius;
   if (blur_step != 0) {
     blur_stopping_point = blur_radius + blur_step;
@@ -91,6 +91,8 @@ function blurTo(point) {
         } else {
           console.log('stopped blurring! blur radius is ' + blur_radius);
           clearInterval(blurInterval)
+
+          if (callback != null) callback();
         }
       } else {                // focus the image
         if (blur_radius > blur_stopping_point && blur_radius > min_blur_radius) {
@@ -101,6 +103,8 @@ function blurTo(point) {
         } else {
           console.log('stopped focusing! blur radius is ' + blur_radius);
           clearInterval(blurInterval);
+
+          if (callback != null) callback();
         }
       }
     }, blurTime);
@@ -143,17 +147,20 @@ function pixelTo(point) {
 
 // blur oscillation
 function startOscillating(a, b) {
-  // blurTo(a);
-  // oscillating = true;
-  // while (oscillating) {
-  //   blurTo(b)
-  //   blurTo(a)
-  // }
-  // blurTo(a)
+  oscillating = true;
+  oscillate(a, b);
 }
 
 function stopOscillating() {
+  oscillating = false;
+}
 
+function oscillate(a, b) {
+  if (oscillating) {
+    blurTo(a, function() {
+      oscillate(b, a)
+    });
+  }
 }
 
 imageObj.onload = function() {
@@ -202,11 +209,17 @@ imageObj.onload = function() {
     blurTo(point);
   });
 
+  $('#show-button').on('click', function() {
+    stopOscillating();
+    pixelTo(1);
+    blurTo(0);
+  });
+
 };
 
 $(function() {
 
   imageObj.src = '../images/kind_of_a_big_dill.jpg';
-  // startOscsleeillating(5, 50);
+  startOscillating(20, 50);
 
 });
