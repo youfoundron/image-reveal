@@ -1,6 +1,6 @@
 var progress = 0;
 var current_progress;
-var bar_total_width = parseInt( $('#progress-bar-div').css('width') ) - 5;
+var bar_total_width = parseInt( $('#progress-bar-div').css('width') );
 var bar_width;
 
 var timer_start
@@ -57,7 +57,7 @@ function updateTime() {
 $(function() {
   var start = new Date(); // timer starts now
   var hours = 0.5/60; // half-minute long timer
-  var hours = 4; // four hour long timer
+  // var hours = 3; // four hour long timer
   startTimer(start, hours, function(){
     updateTime();
   });
